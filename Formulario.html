@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Formulario de incorporación a la red de voluntariado de Fundación Positiva">
+    <title>Voluntariado - Fundación Positiva</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <style>
+        :root {
+            --primary: #2c7a4b;
+            --primary-hover: #1e5a35;
+            --bg: #f8f9fa;
+            --card: #ffffff;
+            --text: #333333;
+            --border: #ced4da;
+            --disabled-bg: #e9ecef;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .logo {
+      width: 150px;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+        }
+
+        .form-container {
+            max-width: 720px;
+            margin: 0 auto;
+            background: var(--card);
+            padding: 32px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        h1 { text-align: center; color: var(--primary); margin-bottom: 8px; }
+        .subtitle { text-align: center; color: #666; margin-bottom: 24px; font-size: 0.95rem; }
+
+        fieldset {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            background: #fafafa;
+        }
+
+        legend {
+            font-weight: 600;
+            color: var(--primary);
+            padding: 0 8px;
+            font-size: 1.1rem;
+        }
+
+        label { display: block; margin-top: 12px; font-weight: 500; }
+        
+        input[type="text"], input[type="number"], input[type="date"], select, textarea {
+            width: 100%;
+            padding: 10px 12px;
+            margin-top: 6px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 1rem;
+            background: #fff;
+            transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(44, 122, 75, 0.15);
+        }
+
+        select:disabled {
+            background-color: var(--disabled-bg);
+            cursor: not-allowed;
+            color: #666;
+        }
+
+        /* Clases para mostrar/ocultar campos dinámicamente */
+        .field-group { display: block; }
+        .field-group.hidden { display: none; }
+
+        .checkbox-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        .checkbox-grid label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            font-weight: normal;
+        }
+
+        .checkbox-grid input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            margin: 0;
+            accent-color: var(--primary);
+        }
+
+        button[type="submit"] {
+            width: 100%;
+            padding: 14px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 16px;
+            transition: background-color 0.2s;
+        }
+
+        button[type="submit"]:hover { background-color: var(--primary-hover); }
+
+        .note {
+            text-align: center;
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 16px;
+            line-height: 1.4;
+        }
+
+        @media (max-width: 600px) {
+            .form-container { padding: 20px; }
+            .checkbox-grid { grid-template-columns: 1fr; }
+        }
+
+        /* === CORRECCIÓN: Transición suave para el campo "Otros" === */
+        #otros_especificar {
+            transition: opacity 0.2s ease, max-height 0.2s ease; /* ✅ Corregido: 0.2s (no 02s) */
+            opacity: 1;
+            max-height: 100px;
+        }
+
+        #otros_especificar[style*="display: none"] {
+            opacity: 0;
+            max-height: 0;
+            margin: 0 !important;
+            padding: 0 !important;
+            border: none !important;
+        }
+
+        /* Estilo de error */
+        #otros_especificar.error {
+            border-color: #dc3545 !important;
+            box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.15);
+            animation: shake 0.3s ease-in-out;
+        }
+
+        /* Pequeña animación de "Error" */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-4px); }
+            75% { transform: translateX(4px); }
+        }
+
+        /* === NUEVO: Estilos para alineación perfecta del checkbox "Otros" === */
+        .checkbox-otros-row {
+            display: flex;
+            align-items: center; /* 👈 Clave: alinea verticalmente */
+            gap: 8px;
+            margin-top: 4px;
+            flex-wrap: wrap;
+        }
+
+        .checkbox-otros-row input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            margin: 0; /* 👈 Elimina margen que desalinea */
+            accent-color: var(--primary);
+            vertical-align: middle; /* 👈 Refuerza alineación en todos los navegadores */
+            flex-shrink: 0;
+        }
+
+        .checkbox-otros-row label {
+            cursor: pointer;
+            line-height: 1; /* 👈 Evita que el line-height desalinee */
+            margin: 0;
+            font-weight: 500;
+            user-select: none;
+        }
+
+        #otros_especificar {
+            display: none;
+            width: 100%;
+            padding: 8px 10px;
+            margin-top: 8px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 0.95rem;
+            box-sizing: border-box;
+        }
+
+        #otros_especificar.visible {
+            display: block;
+        }
+
+        #otros_ayuda {
+            display: none;
+            color: #666;
+            font-size: 0.8rem;
+            margin-top: 4px;
+        }
+
+        #otros_ayuda.visible {
+            display: block;
+        }
+
+        footer {
+      background: #22222283;
+      color: white;
+      text-align: center;
+      padding: 2px;
+      margin-top: 40px;
+    }
+    </style>
+</head>
+<body>
+
+    <main class="form-container">
+        <h1>Formulario de Incorporación</h1>
+        <p class="subtitle">Red de Voluntariado &mdash; Fundación Positiva</p>
+        <img src="Fundación Positiva.png" alt="Logo Izquierdo" class="logo">
+
+        <form action="https://api.web3forms.com/submit" method="POST" id="formVoluntariado" novalidate>
+            <input type="hidden" name="access_key" value="8a91cbb4-f494-40be-804f-7fe5830280a0">
+            <input type="hidden" name="redirect" value="gracias.html">
+            
+            <fieldset>
+                <legend>📄 Datos Personales</legend>
+                <label for="nombre">Nombre</label>
+                <input type="text" id="nombre" name="nombre" required autocomplete="given-name" placeholder="Ej: Ana María">
+
+                <label for="apellidos">Apellidos</label>
+                <input type="text" id="apellidos" name="apellidos" required autocomplete="family-name" placeholder="Ej: Pérez González">
+
+                <label for="edad">Edad</label>
+                <input type="number" id="edad" name="edad" min="14" max="100" required placeholder="Ej: 28">
+
+                <label for="fecha_nacimiento">Fecha de Nacimiento</label>
+                <input type="date" id="fecha_nacimiento" name="fecha_nacimiento" required>
+            </fieldset>
+
+            <fieldset>
+                <legend>📍 Ubicación</legend>
+                <label for="region">Región / País de residencia</label>
+                <select id="region" name="region" required>
+                    <option value="">Seleccione una opción</option>
+                    <option value="arica y parinacota">Región de Arica y Parinacota</option>
+                    <option value="tarapaca">Región de Tarapacá</option>
+                    <option value="antofagasta">Región de Antofagasta</option>
+                    <option value="atacama">Región de Atacama</option>
+                    <option value="coquimbo">Región de Coquimbo</option>
+                    <option value="valparaiso">Región de Valparaíso</option>
+                    <option value="metropolitana">Región Metropolitana</option>
+                    <option value="o'higgins">Región de O'Higgins</option>
+                    <option value="maule">Región del Maule</option>
+                    <option value="ñuble">Región de Ñuble</option>
+                    <option value="biobio">Región del Biobío</option>
+                    <option value="araucania">Región de La Araucanía</option>
+                    <option value="los rios">Región de Los Ríos</option>
+                    <option value="los lagos">Región de Los Lagos</option>
+                    <option value="aysen">Región de Aysén</option>
+                    <option value="magallanes">Región de Magallanes</option>
+                    <option value="extranjero">🌍 Otra / Extranjero</option>
+                </select>
+
+                <!-- Selector de Comunas (Chile) -->
+                <div id="grupo-comuna" class="field-group">
+                    <label for="comuna">Comuna</label>
+                    <select id="comuna" name="comuna" disabled>
+                        <option value="">Primero seleccione una región</option>
+                    </select>
+                </div>
+
+                <!-- Selector de Países (Extranjero) -->
+                <div id="grupo-pais" class="field-group hidden">
+                    <label for="pais">País de residencia</label>
+                    <select id="pais" name="pais" disabled>
+                        <option value="">Seleccione un país</option>
+                    </select>
+                </div>
+                
+                <!-- Campo oculto para enviar ubicación unificada al backend -->
+                <input type="hidden" id="ubicacion_final" name="ubicacion_final">
+            </fieldset>
+
+            <fieldset>
+                <legend>🎯 Perfil e Intereses</legend>
+                <label for="profesion">Actividad / Profesión</label>
+                <input type="text" id="profesion" name="profesion" required placeholder="Ej: Estudiante de Psicología, Contador, Jubilado...">
+
+                <label for="pasatiempos">Pasatiempos</label>
+                <textarea id="pasatiempos" name="pasatiempos" rows="3" placeholder="Ej: Senderismo, lectura, voluntariado anterior, música, cocina..."></textarea>
+
+                <label>Áreas de Interés <span style="font-weight:normal; color:#666;">(seleccione todas las que apliquen)</span></label>
+                <div class="checkbox-grid">
+                    <label><input type="checkbox" name="areas_interes[]" value="ayuda_humanitaria">Ayuda Humanitaria</label>
+                    <label><input type="checkbox" name="areas_interes[]" value="medio_ambiente"> Medio Ambiente</label>
+                    <label><input type="checkbox" name="areas_interes[]" value="educacion"> Educación</label>
+                    <label><input type="checkbox" name="areas_interes[]" value="salud"> Salud y Bienestar</label>
+                    <label><input type="checkbox" name="areas_interes[]" value="cultura"> Cultura y Arte</label>
+                    <label><input type="checkbox" name="areas_interes[]" value="ia">IA/Machine Learning</label>
+                    <label><input type="checkbox" name="areas_interes[]" value="biotecnologia y genetica">Biotecnología y Genética</label>
+                    <label><input type="checkbox" name="areas_interes[]" value="ciberseguridad">Ciberseguridad</label>
+                    <label><input type="checkbox" name="areas_interes[]" value="informatica">Informatica</label>
+                    <label><input type="checkbox" name="areas_interes[]" value="programacion">Programación</label>
+                    <label><input type="checkbox" name="areas_interes[]" value="energias renovables">Sostenibilidad</label>
+                    <label><input type="checkbox" name="areas_interes[]" value="robotica">Robótica</label>
+                    <label><input type="checkbox" name="areas_interes[]" value="asistencia_social"> Asistencia Social</label>
+                    <label><input type="checkbox" name="areas_interes[]" value="leyes">Leyes</label>
+                    <label><input type="checkbox" name="areas_interes[]" value="medicina">Medicina</label>
+                    <label><input type="checkbox" name="areas_interes[]" value="liderazgo">Liderazgo</label>
+                    <label><input type="checkbox" name="areas_interes[]" value="emprendimiento">Emprendimiento</label>
+                    <label><input type="checkbox" name="areas_interes[]" value="marketing">Marketing Digital</label>
+                    <label><input type="checkbox" name="areas_interes[]" value="finanzas">Finanzas Personales</label>
+                    <label><input type="checkbox" name="areas_interes[]" value="fotografia">Fotografía</label>
+                    <label><input type="checkbox" name="areas_interes[]" value="cine">Cine</label>
+                    <label><input type="checkbox" name="areas_interes[]" value="psicologia_salud_mental">Psicología/Salud mental</label>
+                    <label><input type="checkbox" name="areas_interes[]" value="desarrollo_comunitario">Desarrollo comunitario</label>
+                    <label><input type="checkbox" name="areas_interes[]" value="deporte">Deporte</label>
+                    <label><input type="checkbox" name="areas_interes[]" value="gastronomia">Gastronomía</label>
+                    <label><input type="checkbox" name="areas_interes[]" value="idiomas">Idiomas</label>
+                    <label><input type="checkbox" name="areas_interes[]" value="medicina alternativa">Medicina Alternativa</label>
+                </div>
+                
+                <!-- ✅ Checkbox "Otros" CON ALINEACIÓN CORREGIDA (FUERA del grid) -->
+                <div class="checkbox-otros-row" style="margin-top: 12px;">
+                    <input type="checkbox" id="area_otros" name="areas_interes[]" value="otros">
+                    <label for="area_otros">Otros</label>
+                </div>
+                <input type="text" 
+                       id="otros_especificar" 
+                       name="otros_especificar" 
+                       placeholder="Especifique el área de interés..." 
+                       aria-describedby="otros_ayuda">
+                <small id="otros_ayuda">Por favor, describe brevemente el área que te interesa.</small>
+
+            </fieldset>
+
+            <button type="submit">Enviar Solicitud de Incorporación</button>
+            <p class="note">Al enviar este formulario, aceptas nuestra Política de Privacidad y el tratamiento de tus datos exclusivamente para fines de gestión del voluntariado de Fundación Positiva.</p>
+        </form>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const regionSelect = document.getElementById('region');
+            const comunaSelect = document.getElementById('comuna');
+            const paisSelect = document.getElementById('pais');
+            const grupoComuna = document.getElementById('grupo-comuna');
+            const grupoPais = document.getElementById('grupo-pais');
+            const ubicacionFinal = document.getElementById('ubicacion_final');
+            const checkboxOtros = document.getElementById('area_otros');
+            const inputOtros = document.getElementById('otros_especificar');
+            const ayudaOtros = document.getElementById('otros_ayuda');
+
+            // ✅ Función para mostrar/ocultar campo "Otros" usando clases CSS
+            function toggleCampoOtros() {
+                if (checkboxOtros.checked) {
+                    inputOtros.classList.add('visible');
+                    ayudaOtros.classList.add('visible');
+                    inputOtros.required = true;
+                    setTimeout(() => inputOtros.focus(), 100); // Pequeño delay para animación
+                } else {
+                    inputOtros.classList.remove('visible');
+                    ayudaOtros.classList.remove('visible');
+                    inputOtros.required = false;
+                    inputOtros.value = '';
+                    inputOtros.classList.remove('error');
+                }
+            }
+
+            // Event listeners para "Otros"
+            if (checkboxOtros) {
+                checkboxOtros.addEventListener('change', toggleCampoOtros);
+            }
+
+            // ✅ Validación del campo "Otros" al enviar
+            document.getElementById('formVoluntariado').addEventListener('submit', function(e) {
+                
+                // Validación del campo "Otros"
+                if (checkboxOtros && checkboxOtros.checked && !inputOtros.value.trim()) {
+                    e.preventDefault();
+                    inputOtros.classList.add('error');
+                    inputOtros.focus();
+                    alert('Por favor, especifica el área de interés que seleccionaste como "Otros".');
+                    return;
+                }
+
+                // Validación nativa del resto del formulario
+                if (!this.checkValidity()) {
+                    e.preventDefault();
+                    this.reportValidity();
+                    return;
+                }
+                
+                // Actualizar ubicación final
+                if (typeof actualizarUbicacionFinal === 'function') {
+                    actualizarUbicacionFinal();
+                }
+                
+                // Feedback de envío
+                const btn = this.querySelector('button[type="submit"]');
+                btn.textContent = 'Enviando...';
+                btn.disabled = true;
+            });
+
+            // Quitar estilo de error al escribir
+            if (inputOtros) {
+                inputOtros.addEventListener('input', function() {
+                    inputOtros.classList.remove('error');
+                });
+            }
+
+            // ✅ Mapeo Región (Chile) -> Comunas
+            const comunasPorRegion = {
+                "arica y parinacota": ["Arica","Camarones","Putre","General Lagos"],
+                "tarapaca": ["Iquique","Alto Hospicio","Pozo Almonte","Camiña","Colchane","Huara","Pica"],
+                "antofagasta": ["Antofagasta","Mejillones","Sierra Gorda","Taltal","Calama","Ollagüe","San Pedro de Atacama","Tocopilla","María Elena"],
+                "atacama": ["Copiapó","Caldera","Tierra Amarilla","Chañaral","Diego de Almagro","Vallenar","Alto del Carmen","Freirina","Huasco"],
+                "coquimbo": ["La Serena","Coquimbo","Andacollo","La Higuera","Paiguano","Vicuña","Illapel","Canela","Los Vilos","Salamanca","Ovalle","Combarbalá","Monte Patria","Punitaqui","Río Hurtado"],
+                "valparaiso": ["Valparaíso","Casablanca","Concón","Juan Fernández","Puchuncaví","Quintero","Viña del Mar","Los Andes","Calle Larga","Rinconada","San Esteban","La Ligua","Cabildo","Papudo","Petorca","Zapallar","Quillota","La Cruz","La Calera","Nogales","Hijuelas","Limache","Olmué","San Antonio","Algarrobo","Cartagena","El Quisco","El Tabo","Santo Domingo","San Felipe","Catemu","Llaillay","Panquehue","Putaendo","Santa María"],
+                "metropolitana": ["Santiago","Cerrillos","Cerro Navia","Conchalí","El Bosque","Estación Central","Huechuraba","Independencia","La Cisterna","La Florida","La Granja","La Pintana","La Reina","Las Condes","Lo Barnechea","Lo Espejo","Lo Prado","Macul","Maipú","Ñuñoa","Pedro Aguirre Cerda","Peñalolén","Providencia","Pudahuel","Quilicura","Quinta Normal","Recoleta","Renca","San Joaquín","San Miguel","San Ramón","Vitacura","Puente Alto","Pirque","San José de Maipo","Colina","Lampa","Tiltil","San Bernardo","Buin","Calera de Tango","Paine","Melipilla","Alhué","Curacaví","María Pinto","San Pedro","Talagante","El Monte","Isla de Maipo","Padre Hurtado","Peñaflor"],
+                "o'higgins": ["Rancagua","Codegua","Coinco","Coltauco","Doñihue","Graneros","Las Cabras","Machalí","Malloa","Mostazal","Olivar","Peumo","Pichidegua","Quinta de Tilcoco","Rengo","Requínoa","San Vicente","Pichilemu","La Estrella","Litueche","Marchihue","Navidad","Paredones","San Fernando","Chépica","Chimbarongo","Lolol","Nancagua","Palmilla","Peralillo","Placilla","Pumanque","Santa Cruz"],
+                "maule": ["Talca","Constitución","Curepto","Empedrado","Maule","Pelarco","Pencahue","Río Claro","San Clemente","San Rafael","Curicó","Hualañé","Licantén","Molina","Rauco","Romeral","Sagrada Familia","Teno","Vichuquén","Linares","Colbún","Longaví","Parral","Retiro","San Javier","Villa Alegre","Yerbas Buenas","Cauquenes","Chanco","Pelluhue"],
+                "ñuble": ["Chillán","Bulnes","Cobquecura","Coelemu","Coihueco","Chillán Viejo","El Carmen","Ninhue","Ñiquén","Pemuco","Pinto","Portezuelo","Quillón","Quirihue","Ránquil","San Carlos","San Fabián","San Ignacio","San Nicolás","Treguaco","Yungay"],
+                "biobio": ["Concepción","Coronel","Chiguayante","Florida","Hualqui","Lota","Penco","San Pedro de la Paz","Santa Juana","Talcahuano","Tomé","Hualpén","Lebu","Arauco","Cañete","Contulmo","Curanilahue","Los Álamos","Tirúa","Los Ángeles","Antuco","Cabrero","Laja","Mulchén","Nacimiento","Negrete","Quilaco","Quilleco","San Rosendo","Santa Bárbara","Tucapel","Yumbel","Alto Biobío"],
+                "araucania": ["Temuco","Carahue","Cunco","Curarrehue","Freire","Galvarino","Gorbea","Lautaro","Loncoche","Melipeuco","Nueva Imperial","Padre Las Casas","Perquenco","Pitrufquén","Pucón","Saavedra","Teodoro Schmidt","Toltén","Vilcún","Villarrica","Cholchol","Angol","Collipulli","Curacautín","Ercilla","Lonquimay","Los Sauces","Lumaco","Purén","Renaico","Traiguén","Victoria"],
+                "los rios": ["Valdivia","Corral","Lanco","Los Lagos","Máfil","Mariquina","Paillaco","Panguipulli","La Unión","Futrono","Lago Ranco","Río Bueno"],
+                "los lagos": ["Puerto Montt","Calbuco","Cochamó","Fresia","Frutillar","Los Muermos","Llanquihue","Maullín","Puerto Varas","Castro","Ancud","Chonchi","Curaco de Vélez","Dalcahue","Puqueldón","Queilén","Quellón","Quemchi","Quinchao","Osorno","Puerto Octay","Purranque","Puyehue","Río Negro","San Juan de la Costa","San Pablo","Chaitén","Futaleufú","Hualaihué","Palena"],
+                "aysen": ["Coyhaique","Lago Verde","Aysén","Cisnes","Guaitecas","Cochrane","O'Higgins","Tortel","Chile Chico","Río Ibáñez"],
+                "magallanes": ["Punta Arenas","Laguna Blanca","Río Verde","San Gregorio","Cabo de Hornos","Antártica","Porvenir","Primavera","Timaukel","Natales","Torres del Paine"]
+            };
+
+            // ✅ Lista de países (ordenados alfabéticamente en español)
+            const paisesDelMundo = [
+                "Afganistán", "Albania", "Alemania", "Andorra", "Angola", "Antigua y Barbuda", "Arabia Saudita", "Argelia", "Argentina", "Armenia", "Australia", "Austria", "Azerbaiyán",
+                "Bahamas", "Bangladés", "Barbados", "Baréin", "Bélgica", "Belice", "Benín", "Bielorrusia", "Birmania", "Bolivia", "Bosnia y Herzegovina", "Botsuana", "Brasil", "Brunéi", "Bulgaria", "Burkina Faso", "Burundi", "Bután",
+                "Cabo Verde", "Camboya", "Camerún", "Canadá", "Catar", "Chad", "Chequia", "China", "Chipre", "Colombia", "Comoras", "Corea del Norte", "Corea del Sur", "Costa de Marfil", "Costa Rica", "Croacia", "Cuba",
+                "Dinamarca", "Dominica",
+                "Ecuador", "Egipto", "El Salvador", "Emiratos Árabes Unidos", "Eritrea", "Eslovaquia", "Eslovenia", "España", "Estados Unidos", "Estonia", "Etiopía",
+                "Filipinas", "Finlandia", "Fiyi", "Francia",
+                "Gabón", "Gambia", "Georgia", "Ghana", "Granada", "Grecia", "Guatemala", "Guyana", "Guinea", "Guinea-Bisáu", "Guinea Ecuatorial",
+                "Haití", "Honduras", "Hungría",
+                "India", "Indonesia", "Irak", "Irán", "Irlanda", "Islandia", "Islas Marshall", "Islas Salomón", "Israel", "Italia",
+                "Jamaica", "Japón", "Jordania",
+                "Kazajistán", "Kenia", "Kirguistán", "Kiribati", "Kuwait",
+                "Laos", "Lesoto", "Letonia", "Líbano", "Liberia", "Libia", "Liechtenstein", "Lituania", "Luxemburgo",
+                "Macedonia del Norte", "Madagascar", "Malasia", "Malaui", "Maldivas", "Malí", "Malta", "Marruecos", "Mauricio", "Mauritania", "México", "Micronesia", "Moldavia", "Mónaco", "Mongolia", "Montenegro", "Mozambique",
+                "Namibia", "Nauru", "Nepal", "Nicaragua", "Níger", "Nigeria", "Noruega", "Nueva Zelanda",
+                "Omán",
+                "Pakistán", "Palaos", "Panamá", "Papúa Nueva Guinea", "Paraguay", "Países Bajos", "Perú", "Polonia", "Portugal",
+                "Reino Unido", "República Centroafricana", "República Checa", "República Democrática del Congo", "República Dominicana", "República del Congo", "Ruanda", "Rumania", "Rusia",
+                "Samoa", "San Cristóbal y Nieves", "San Marino", "San Vicente y las Granadinas", "Santa Lucía", "Santo Tomé y Príncipe", "Senegal", "Serbia", "Seychelles", "Sierra Leona", "Singapur", "Siria", "Somalia", "Sri Lanka", "Suazilandia", "Sudáfrica", "Sudán", "Sudán del Sur", "Suecia", "Suiza", "Surinam",
+                "Tailandia", "Tanzania", "Tayikistán", "Timor Oriental", "Togo", "Tonga", "Trinidad y Tobago", "Túnez", "Turkmenistán", "Turquía", "Tuvalu",
+                "Ucrania", "Uganda", "Uruguay", "Uzbekistán",
+                "Vanuatu", "Vaticano", "Venezuela", "Vietnam",
+                "Yemen", "Yibuti",
+                "Zambia", "Zimbabue"
+            ].sort((a, b) => a.localeCompare(b, 'es'));
+
+            // Función para poblar un select con opciones
+            function poblarSelect(select, opciones, placeholder) {
+                select.innerHTML = '';
+                const defaultOpt = document.createElement('option');
+                defaultOpt.value = '';
+                defaultOpt.textContent = placeholder;
+                defaultOpt.selected = true;
+                select.appendChild(defaultOpt);
+                
+                opciones.forEach(opcion => {
+                    const opt = document.createElement('option');
+                    opt.value = opcion;
+                    opt.textContent = opcion;
+                    select.appendChild(opt);
+                });
+            }
+
+            // Lógica principal al cambiar región
+            regionSelect.addEventListener('change', function() {
+                const region = this.value;
+                
+                // Resetear ambos selects
+                comunaSelect.innerHTML = '';
+                paisSelect.innerHTML = '';
+                comunaSelect.disabled = true;
+                paisSelect.disabled = true;
+                comunaSelect.required = false;
+                paisSelect.required = false;
+                ubicacionFinal.value = '';
+
+                if (!region) {
+                    grupoComuna.classList.add('hidden');
+                    grupoPais.classList.add('hidden');
+                    return;
+                }
+
+                if (region === 'extranjero') {
+                    grupoComuna.classList.add('hidden');
+                    grupoPais.classList.remove('hidden');
+                    poblarSelect(paisSelect, paisesDelMundo, 'Seleccione un país');
+                    paisSelect.disabled = false;
+                    paisSelect.required = true;
+                } else {
+                    grupoPais.classList.add('hidden');
+                    grupoComuna.classList.remove('hidden');
+                    const comunas = comunasPorRegion[region] || [];
+                    poblarSelect(comunaSelect, comunas, 'Seleccione una comuna');
+                    comunaSelect.disabled = false;
+                    comunaSelect.required = true;
+                }
+            });
+
+            // Sincronizar ubicación final para el backend
+            function actualizarUbicacionFinal() {
+                if (regionSelect.value === 'extranjero' && paisSelect.value) {
+                    ubicacionFinal.value = `Extranjero - ${paisSelect.value}`;
+                } else if (comunaSelect.value && regionSelect.value !== 'extranjero') {
+                    ubicacionFinal.value = `${comunaSelect.value}, ${regionSelect.value}`;
+                } else {
+                    ubicacionFinal.value = '';
+                }
+            }
+
+            comunaSelect.addEventListener('change', actualizarUbicacionFinal);
+            paisSelect.addEventListener('change', actualizarUbicacionFinal);
+
+            // Validación y envío final
+            document.getElementById('formVoluntariado').addEventListener('submit', function(e) {
+                actualizarUbicacionFinal();
+                
+                if (!this.checkValidity()) {
+                    e.preventDefault();
+                    this.reportValidity();
+                } else {
+                    const btn = this.querySelector('button[type="submit"]');
+                    btn.textContent = 'Enviando...';
+                    btn.disabled = true;
+                }
+            });
+        });
+    </script>
+    <footer>
+    <p>Creado por<strong> Código 404 CS&#174;</strong> Para <strong>Fundación Positiva </strong></p>
+    <a href="Política de Privacidad.html">Política de Privacidad</a>
+    </footer>
+
+</body>
+</html>
