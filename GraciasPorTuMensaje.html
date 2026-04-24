@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¡Solicitud Recibida! - Fundación Positiva</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <style>
+        :root {
+            --primary: #2c7a4b;
+            --primary-hover: #1e5a35;
+            --bg: #f8f9fa;
+            --card: #ffffff;
+            --text: #333333;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            max-width: 720px;
+            margin: auto;
+            background: var(--card);
+            padding: 40px 32px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+
+        .logo {
+            width: 150px;
+            margin: 0 auto 24px;
+            display: block;
+        }
+
+        h1 {
+            color: var(--primary);
+            margin-bottom: 16px;
+            font-size: 1.8rem;
+        }
+
+        p {
+            margin-bottom: 12px;
+            color: #555;
+        }
+
+        .btn-back {
+            display: inline-block;
+            margin-top: 24px;
+            padding: 12px 28px;
+            background-color: var(--primary);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: background-color 0.2s;
+        }
+
+        .btn-back:hover {
+            background-color: var(--primary-hover);
+        }
+
+        footer {
+            background: #22222283;
+            color: white;
+            text-align: center;
+            padding: 2px;
+            margin-top: auto;
+        }
+
+        footer a {
+            color: white;
+            text-decoration: underline;
+        }
+
+        @media (max-width: 600px) {
+            .container { padding: 24px 20px; }
+            h1 { font-size: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <main class="container">
+        <img src="Fundación Positiva.png" alt="Logo Fundación Positiva" class="logo">
+        <h1>✅ ¡Solicitud Recibida!</h1>
+        <p>Gracias por querer formar parte de nuestra red de voluntariado.</p>
+        <p>Hemos registrado tus datos correctamente. Nuestro equipo los revisará y se pondrá en contacto contigo en los próximos días.</p>
+        <a href="index.html" class="btn-back">← Volver al inicio</a>
+    </main>
+
+    <footer>
+        <p>Creado por <strong>Código 404 CS®</strong> Para <strong>Fundación Positiva</strong></p>
+        <a href="Política de Privacidad.html">Política de Privacidad</a>
+    </footer>
+
+</body>
+</html>
